@@ -1,0 +1,143 @@
+'''
+Mar 18, 2015
+
+@author: Christopher Lu
+'''
+
+# Use the following items to help you get started. 
+
+# use these variables to make your code more readable
+START_CODON = 'atg'
+STOP_CODONS = [ 'taa', 'tag', 'tga' ]
+
+# these next two lists are meant to be used together,
+#   i.e., the index of a codon in the first list matches
+#         its corresponding amino acid in the second list
+# they are taken from this web site:
+#   http://en.wikipedia.org/wiki/DNA_codon_table
+# and are intended to help you with the problem, 
+# so you do not have to hand code the translation yourself
+CODONS = [
+  'gct', 'gcc', 'gca', 'gcg',
+  'tgt', 'tgc', 
+  'gat', 'gac',
+  'gaa', 'gag', 
+  'ttt', 'ttc', 
+  'ggt', 'ggc', 'gga', 'ggg',
+  'cat', 'cac',
+  'att', 'atc', 'ata',
+  'aaa', 'aag',
+  'ctt', 'ctc', 'cta', 'ctg', 'tta', 'ttg',
+  'atg',
+  'aat', 'aac',
+  'cct', 'ccc', 'cca', 'ccg',
+  'caa', 'cag',
+  'cgt', 'cgc', 'cga', 'cgg', 'aga', 'agg',
+  'agt', 'agc', 'tct', 'tcc', 'tca', 'tcg', 
+  'act', 'acc', 'aca', 'acg',
+  'gtt', 'gtc', 'gta', 'gtg',
+  'tgg',
+  'tat', 'tac',
+]
+AMINO_ACIDS = [ 
+  'A', 'A', 'A', 'A', 
+  'C', 'C',
+  'D', 'D', 
+  'E', 'E', 
+  'F', 'F',
+  'G', 'G', 'G', 'G',
+  'H', 'H',
+  'I', 'I', 'I',
+  'K', 'K', 
+  'L', 'L', 'L', 'L', 'L', 'L',
+  'M', 
+  'N', 'N', 
+  'P', 'P', 'P', 'P',
+  'Q', 'Q',
+  'R', 'R', 'R', 'R', 'R', 'R',
+  'S', 'S',  'S', 'S', 'S', 'S',
+  'T', 'T', 'T', 'T', 
+  'V', 'V', 'V', 'V', 
+  'W',
+  'Y', 'Y', 
+]
+
+def findRegion(dna):
+    START = "atg"
+    STOP = ["taa", "tag", "tga"]
+    count = 0
+    code = []
+    if START not in dna:
+        return ""
+    else:
+        index = dna.index(START)
+        newstring = dna[(index + 3):]
+        codingregion = [newstring[i: (i + 3)] for i in range(0, len(newstring), 3)]
+        if "taa" not in codingregion and "tag" not in codingregion and "tga" not in codingregion:
+            return ""
+        while count == 0:
+            for codon in codingregion:
+                if codon in STOP:
+                    return code
+                else:
+                    code.append(codon)
+
+# This function finds the first protein coding region in the DNA
+
+def codonAA(codingregion):
+    aminoacids = []
+    for codon in codingregion:
+        index = CODONS.index(codon)
+        aminoacids.append(AMINO_ACIDS[index])
+    return aminoacids
+
+# This function takes each codon in the coding region and matches it with the corresponding amino acid.
+
+def proteinstring(AAList):
+    return ''.join(AAList)
+
+# This function turns the list of amino acids into a string of amino acids
+
+def reversecomp(dna):
+    lists = list(dna)
+    reverse = lists[::-1]
+    answerlist = []
+    for n in reverse:
+        if n == "a":
+            answerlist.append("t")
+        if n == "t":
+            answerlist.append("a")
+        if n == "c":
+            answerlist.append("g")
+        if n == "g":
+            answerlist.append("c")
+    answer = ''.join(answerlist)
+    return answer
+
+# This function provides the complementary sequence of the DNA
+
+def translateDNAtoProtein (dna):
+    """
+    given a string composed only of lowercase letters 'gcta', 
+    return a string of uppercase letters that represents the 
+    longest protein found first within that string or its 
+    reverse complement, or the empty string if no protein can
+    be found
+    """
+    # TODO: complete this function
+    coderegion1 = findRegion(dna)
+    dna2 = reversecomp(dna)
+    coderegion2 = findRegion(dna2)
+    proteinlist1 = codonAA(coderegion1)
+    proteinlist2 = codonAA(coderegion2)
+    proteinstring1 = proteinstring(proteinlist1)
+    proteinstring2 = proteinstring(proteinlist2)
+    if len(proteinstring1) < len(proteinstring2):
+        return proteinstring2
+    if len(proteinstring1) == len(proteinstring2):
+        return proteinstring1
+    else:
+        return proteinstring1
+     
+    
+
